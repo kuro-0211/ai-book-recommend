@@ -184,45 +184,6 @@ n8n credential은 컨테이너 볼륨에 저장돼야 해서 자동 import가 �
 
 ---
 
-## 🛠️ 자주 만나는 이슈
-
-### Ollama 컨테이너가 GPU 관련 에러로 죽음
-`docker-compose.yml` 의 `ollama.deploy` 블록을 주석 처리하면 CPU 폴백으로 동작.
-
-### 포트 충돌
-`.env` 의 `*_PORT` 값을 변경 (`MYSQL_PORT=3307`, `DJANGO_PORT=8000`, …).
-
-### 첫 추천 호출이 느림
-gemma3:4b 첫 로딩 + (CPU 모드면) 추론 시간이 누적됩니다. 두 번째 호출부터는 `OLLAMA_KEEP_ALIVE=24h` 덕분에 빠릅니다. 너무 느리면 `.env` 의 `OLLAMA_MODEL=gemma3:1b` 로 교체.
-
-### `docker-compose` v1 의 `KeyError: 'ContainerConfig'`
-v1 (Python 기반, EOL)과 최신 Docker 이미지 메타데이터 불호환. 우회법:
-
-```bash
-docker-compose rm -fs <service>
-docker-compose up -d --force-recreate --no-deps <service>
-```
-
-근본 해결은 v2 플러그인 설치 (`sudo apt-get install -y docker-compose-plugin`).
-
-### CLI로 SQL 직접 실행 시 한글 mojibake (`ìš°ìš¸ ...`)
-mysql 클라이언트 기본 charset이 latin1이라 UTF-8 바이트가 이중 인코딩되어 저장됨. **항상 옵션을 명시**:
-
-```bash
-docker-compose exec mysql mysql --default-character-set=utf8mb4 \
-  -ubookuser -pbookpw_change_me bookrec -e "..."
-```
-
-Django 앱 / n8n / PHP 통한 INSERT는 이 옵션과 무관하게 항상 정상.
-
-### PHP `/stats` 시간이 9시간 빠름
-DB는 UTC로 저장 (Django `USE_TZ=True`), PHP가 그대로 표시한 상태. 이미 SQL에서 `CONVERT_TZ(..., '+00:00', '+09:00')` 로 KST 변환해 둠.
-
-### 마이그레이션이 `Table already exists` 로 실패
-`docker-compose.yml` 의 Django command가 `migrate --fake-initial --noinput` 이라 init SQL로 만든 테이블을 인식하고 0001을 가짜 적용 → 0002만 실제 ALTER. 정상.
-
----
-
 ## 🧪 검증 명령
 
 ### 추천 데이터 확인 (사용자별 포함)
