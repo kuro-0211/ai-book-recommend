@@ -1,0 +1,21 @@
+{% extends "recommender/base.html" %}
+{% block title %}추천 결과 — {{ keyword }}{% endblock %}
+{% block body %}
+  <h1>🔎 "{{ keyword }}" 추천 결과</h1>
+
+  {% if books %}
+    {% for b in books %}
+      <div class="card">
+        <h3>{{ forloop.counter }}. {{ b.title }}</h3>
+        <div class="author">{{ b.author }}</div>
+        <div class="summary"><strong>줄거리:</strong> {{ b.summary }}</div>
+        <div class="reason"><strong>추천 이유:</strong> {{ b.reason }}</div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="error">
+      모델 응답을 JSON으로 파싱하지 못했습니다. 아래는 원본 응답입니다.
+    </div>
+    <pre>{{ raw }}</pre>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "recommender/base.html" %}
+{% block title %}로그인{% endblock %}
+{% block body %}
+  <h1>🔐 로그인</h1>
+  <p class="subtitle">로그인하면 본인의 추천 기록을 따로 볼 수 있어요.</p>
+
+  {% if form.errors %}
+    <div class="error">아이디 또는 비밀번호가 올바르지 않습니다.</div>
+  {% endif %}
+
+  <form method="post">
+    {% csrf_token %}
+    <div style="display:flex; flex-direction:column; gap:10px; max-width: 360px;">
+      <label>아이디 <input type="text" name="username" required autofocus
+                          style="width:100%; padding:10px; border:1px solid #ccc; border-radius:8px;"></label>
+      <label>비밀번호 <input type="password" name="password" required
+                            style="width:100%; padding:10px; border:1px solid #ccc; border-radius:8px;"></label>
+      <button type="submit">로그인</button>
+    </div>
+    <input type="hidden" name="next" value="{{ next }}">
+  </form>
+
+  <p class="footer">
+    계정이 없으신가요? <a href="{% url 'signup' %}">회원가입</a>
+  </p>
+{% endblock %}

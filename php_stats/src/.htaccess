@@ -1,0 +1,3 @@
+RewriteEngine On
+# /stats, /stats/ 모두 stats.php로 매핑
+RewriteRule ^stats/?$ stats.php [L]

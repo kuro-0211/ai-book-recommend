@@ -1,0 +1,35 @@
+{% extends "recommender/base.html" %}
+{% block title %}내 추천 기록{% endblock %}
+{% block body %}
+  <h1>📖 내 추천 기록</h1>
+  <p class="subtitle">{{ user.username }} 님이 받은 최근 추천 50건입니다.</p>
+
+  {% if recs %}
+    {% for rec in recs %}
+      <div class="card" style="margin-bottom: 22px;">
+        <div style="display:flex; justify-content:space-between; align-items:baseline;">
+          <h3 style="margin:0;">🔎 "{{ rec.keyword }}"</h3>
+          <small style="color:#888;">{{ rec.created_at|date:"Y-m-d H:i" }}</small>
+        </div>
+        {% if rec.books.all %}
+          <ol style="margin: 10px 0 0 18px; padding: 0;">
+            {% for b in rec.books.all %}
+              <li style="margin: 8px 0;">
+                <strong>{{ b.title }}</strong>
+                {% if b.author %} <span style="color:#666;">— {{ b.author }}</span>{% endif %}
+                {% if b.summary %}<div style="font-size:14px; color:#444;">{{ b.summary }}</div>{% endif %}
+                {% if b.reason %}<div style="font-size:13px; color:#2b6cb0;">→ {{ b.reason }}</div>{% endif %}
+              </li>
+            {% endfor %}
+          </ol>
+        {% else %}
+          <div style="color:#888; font-size:13px;">(저장된 책 정보가 없습니다 — 모델 응답 파싱 실패)</div>
+        {% endif %}
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="card">
+      아직 추천 기록이 없습니다. <a href="/">메인 페이지</a>에서 키워드를 입력해 보세요.
+    </div>
+  {% endif %}
+{% endblock %}
